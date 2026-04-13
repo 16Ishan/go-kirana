@@ -25,4 +25,4 @@ dependencyResolutionManagement {
     }
 }
 include 'products'
-rootProject.name = 'products'
+rootProject.name = 'go-kirana-products'
