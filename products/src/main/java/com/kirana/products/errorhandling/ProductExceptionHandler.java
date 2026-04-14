@@ -29,7 +29,7 @@ public class ProductExceptionHandler {
       Exception ex, HttpServletRequest request) {
 
     String message = resolveBadRequestMessage(ex);
-    log.warn("Client request error: {}", message, ex);
+    log.warn("Client request error: {}", message);
 
     return buildErrorResponse(
         HttpStatus.BAD_REQUEST, "INVALID_REQUEST", message, request.getRequestURI());
@@ -51,7 +51,7 @@ public class ProductExceptionHandler {
   public ResponseEntity<ErrorResponse> handleInvalidRequestException(
       InvalidRequestException ex, HttpServletRequest request) {
 
-    log.warn("Invalid request: {}", ex.getMessage(), ex);
+    log.warn("Invalid request: {}", ex.getMessage());
     return buildErrorResponse(
         HttpStatus.BAD_REQUEST, "INVALID_REQUEST", ex.getMessage(), request.getRequestURI());
   }

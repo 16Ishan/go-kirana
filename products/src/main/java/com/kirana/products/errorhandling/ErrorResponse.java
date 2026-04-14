@@ -9,5 +9,5 @@ public record ErrorResponse(
     @Schema(example = "400") int status,
     @Schema(example = "Bad Request") String error,
     @Schema(example = "INVALID_REQUEST") String code,
-    @Schema(example = "Size cannot exceed: 100") String message,
+    @Schema(example = "Size must be between 1 and 100") String message,
     @Schema(example = "/v1/api/product/products") String path) {}
