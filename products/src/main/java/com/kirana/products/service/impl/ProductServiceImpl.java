@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService {
 
   private final ProductRepository productRepository;
   private final RequestValidator requestValidator;
