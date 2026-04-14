@@ -1,0 +1,62 @@
+[versions]
+springBootVersion = "3.4.2"
+
+[libraries]
+#spring-boot#
+spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "springBootVersion"}
+spring-boot-actuator-autoconfigure = { module = "org.springframework.boot:spring-boot-actuator-autoconfigure", version.ref = "springBootVersion"}
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBootVersion"}
+spring-boot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "springBootVersion"}
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBootVersion"}
+spring-boot-starter-data-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc", version.ref = "springBootVersion"}
+spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "springBootVersion"}
+spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref = "springBootVersion"}
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBootVersion"}
+
+#apache
+commons-collections4 = { module = "org.apache.commons:commons-collections4", version = "4.4" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.17.0" }
+
+#other
+lombok = { module = "org.projectlombok:lombok", version = "1.18.34" }
+
+#database
+postgresql = { module = "org.postgresql:postgresql", version = "42.7.5"}
+h2 = { module = "com.h2database:h2", version = "2.2.224"}
+
+[bundles]
+springBootStarters = [
+    "spring-boot-starter",
+    "spring-boot-actuator-autoconfigure",
+    "spring-boot-starter-web",
+    "spring-boot-starter-webflux",
+    "spring-boot-starter-data-jpa",
+    "spring-boot-starter-data-jdbc",
+    "spring-boot-configuration-processor",
+    "spring-boot-starter-aop",
+    "spring-boot-starter-actuator"
+]
+
+database = [
+    "postgresql",
+    "h2",
+]
+
+apache = [
+    "commons-collections4",
+    "commons-lang3"
+]
+
+lombok = [
+    "lombok"
+]
+
+annotationOnly = [
+    "lombok"
+]
+
+[plugins]
+spotless = { id = "com.diffplug.spotless", version = "7.0.2" }
+jib = { id = "com.google.cloud.tools.jib", version = "3.4.4" }
+palantir = { id = "com.palantir.git-version", version="3.1.0" }
+sonarqube = { id = "org.sonarqube", version = "6.0.1.5171" }

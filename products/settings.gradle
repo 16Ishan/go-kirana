@@ -1,0 +1,28 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven {
+            url "https://packages.confluent.io/maven"
+        }
+    }
+
+    versionCatalogs {
+        libs {
+            from(files("./gradle/wrapper/libs.versions.toml"))
+        }
+
+        testLibs {
+            from(files("./gradle/wrapper/test-libs.versions.toml"))
+        }
+    }
+}
+include 'products'
+rootProject.name = 'go-kirana-products'

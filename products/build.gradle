@@ -1,0 +1,132 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'idea'
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.sonarqube)
+    alias(libs.plugins.palantir)
+    alias(libs.plugins.jib)
+}
+
+group = "com.kirana"
+version = "1.0.0"
+
+dependencies {
+    implementation (libs.bundles.springBootStarters)
+    implementation (libs.bundles.apache)
+    implementation (libs.bundles.database) {
+        exclude group: 'com.zaxxer', module: 'HikariCP'
+    }
+    implementation (libs.bundles.lombok)
+    annotationProcessor (libs.bundles.annotationOnly)
+    testImplementation (testLibs.bundles.test)
+}
+
+idea {
+    project {
+        languageLevel = "21"
+        sourceCompatibility = "21"
+        targetCompatibility = "21"
+    }
+    module {
+        jdkName = '21'
+    }
+}
+
+jacoco {
+    toolVersion = '0.8.12'
+}
+
+test {
+    jvmArgs += "--add-opens=java.base/java.lang=ALL-UNNAMED"
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+
+    dependsOn test
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        target("src/**/*.java")
+    }
+    format("misc") {
+        target("*.md", ".gitignore", ".editorconfig")
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+jib {
+    from {
+        image = "${jibBaseImage}"
+        platforms {
+            platform {
+                architecture = "arm64"
+                os = "linux"
+            }
+        }
+    }
+
+    to {
+        image = "ishan16/go-kirana-products:1.0.0"
+        auth {
+            username = "${dockerHubUsername}" ?: System.getenv("DOCKER_HUB_USERNAME")
+            password = "${dockerHubPassword}" ?: System.getenv("DOCKER_HUB_PASSWORD")
+        }
+    }
+
+    containerizingMode = "packaged"
+
+    container {
+        creationTime = "USE_CURRENT_TIMESTAMP"
+        environment = [
+                'TZ': 'Europe/Berlin'
+        ]
+
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectName", "${gradle.rootProject.getName()}"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.branch.name", getCurrentBranch()
+        property "sonar.qualitygate.wait", "true"
+        property("sonar.qualitygate.timeout", "70")
+        property "sonar.coverage.exclusions",
+                "**/config/**, " +
+                        "**/*Enum.java, " +
+                        "**/Application.java, " +
+                        "**/errorhandling/**, " +
+                        "**/*.yml, " +
+                        "**/*.yaml, " +
+                        "**/*Test.java"
+    }
+}
+
+def getCurrentBranch() {
+    def branch = ""
+    def proc = "git rev-parse --abbrev-ref HEAD".execute()
+    proc.in.eachLine { line -> branch = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    branch
+}
+
+// Sonar checks disabled temporarily due to errors
+// tasks.sonar.dependsOn = ["check"]
+// tasks.build.dependsOn = ["sonar"]
+// tasks.jibDockerBuild.dependsOn = ["sonar"]
+
+tasks.named('wrapper') {
+    distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = '8.13'
+}
