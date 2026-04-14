@@ -6,7 +6,6 @@ import com.kirana.products.repository.ProductRepository;
 import com.kirana.products.service.ProductService;
 import com.kirana.products.validations.RequestValidator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class ProductsServiceImpl implements ProductService {
+class ProductServiceImpl implements ProductService {
 
   private final ProductRepository productRepository;
   private final RequestValidator requestValidator;
