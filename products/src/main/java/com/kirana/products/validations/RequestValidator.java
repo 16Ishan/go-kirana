@@ -11,8 +11,11 @@ public class RequestValidator {
   private int maxPageSize;
 
   public void validateLimit(int size) {
-    if (size > maxPageSize) {
-      throw new InvalidRequestException("Size cannot exceed: " + maxPageSize);
+    if (maxPageSize <= 0) {
+      throw new InvalidRequestException("Configured max page size must be greater than 0");
+    }
+    if (size < 1 || size > maxPageSize) {
+      throw new InvalidRequestException("Size must be between 1 and " + maxPageSize);
     }
   }
 }

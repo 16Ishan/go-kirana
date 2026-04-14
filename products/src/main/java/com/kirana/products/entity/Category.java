@@ -2,11 +2,13 @@ package com.kirana.products.entity;
 
 import jakarta.persistence.*;
 import java.util.UUID;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "categories")
-@Data
+@Getter
+@Setter
 public class Category {
 
   @Id @GeneratedValue private UUID id;

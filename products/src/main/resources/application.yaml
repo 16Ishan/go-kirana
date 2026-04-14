@@ -1,13 +1,6 @@
 spring:
   application:
     name: go-kirana-products
-  datasource:
-    url: jdbc:postgresql://localhost:5432/go_kirana
-    username: root
-    password: root
-  h2:
-    console:
-      enabled: true
   jpa:
     show-sql: true
 

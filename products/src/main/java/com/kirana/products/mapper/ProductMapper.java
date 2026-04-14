@@ -15,7 +15,7 @@ public class ProductMapper {
         projection.getPrice(),
         projection.getImageUrl(),
         Boolean.TRUE.equals(projection.getIsAvailable()),
-        projection.getCreatedAt() == null ? null : projection.getCreatedAt(),
-        projection.getUpdatedAt() == null ? null : projection.getUpdatedAt());
+        projection.getCreatedAt(),
+        projection.getUpdatedAt());
   }
 }
