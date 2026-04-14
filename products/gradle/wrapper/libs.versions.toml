@@ -1,5 +1,6 @@
 [versions]
 springBootVersion = "3.4.2"
+springdocVersion = "2.8.6"
 
 [libraries]
 #spring-boot#
@@ -12,6 +13,7 @@ spring-boot-starter-data-jdbc = { module = "org.springframework.boot:spring-boot
 spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "springBootVersion"}
 spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref = "springBootVersion"}
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBootVersion"}
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdocVersion" }
 
 #apache
 commons-collections4 = { module = "org.apache.commons:commons-collections4", version = "4.4" }
@@ -34,7 +36,8 @@ springBootStarters = [
     "spring-boot-starter-data-jdbc",
     "spring-boot-configuration-processor",
     "spring-boot-starter-aop",
-    "spring-boot-starter-actuator"
+    "spring-boot-starter-actuator",
+    "springdoc-openapi-starter-webmvc-ui"
 ]
 
 database = [

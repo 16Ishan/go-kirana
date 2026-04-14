@@ -11,6 +11,11 @@ plugins {
 group = "com.kirana"
 version = "1.0.0"
 
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add("-parameters")
+}
+
+
 dependencies {
     implementation (libs.bundles.springBootStarters)
     implementation (libs.bundles.apache)
