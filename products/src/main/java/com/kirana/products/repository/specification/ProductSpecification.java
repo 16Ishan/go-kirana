@@ -11,7 +11,8 @@ public class ProductSpecification {
 
   public static Specification<Product> categoryFilterWithFetch(String category) {
     return (root, query, cb) -> {
-      String normalizedCategory = StringUtils.lowerCase(StringUtils.trimToNull(category), Locale.ROOT);
+      String normalizedCategory =
+          StringUtils.lowerCase(StringUtils.trimToNull(category), Locale.ROOT);
       boolean isCountQuery = query != null && query.getResultType() == Long.class;
 
       // Non-count query: fetch category once so mapper won't trigger lazy loading.
@@ -30,8 +31,7 @@ public class ProductSpecification {
         return cb.like(cb.lower(categoryJoin.get("name")), "%" + normalizedCategory + "%");
       }
 
-      return cb.like(
-          cb.lower(root.get("category").get("name")), "%" + normalizedCategory + "%");
+      return cb.like(cb.lower(root.get("category").get("name")), "%" + normalizedCategory + "%");
     };
   }
 
