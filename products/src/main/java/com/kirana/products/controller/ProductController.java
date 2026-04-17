@@ -1,6 +1,7 @@
 package com.kirana.products.controller;
 
 import com.kirana.products.dto.ProductDto;
+import com.kirana.products.dto.ProductFilterRequest;
 import com.kirana.products.errorhandling.ErrorResponse;
 import com.kirana.products.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,10 +14,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/api/product")
@@ -42,10 +40,9 @@ public class ProductController {
   })
   @GetMapping("/products")
   public ResponseEntity<Page<ProductDto>> getProducts(
-      @RequestParam(required = false) String category,
-      @RequestParam(required = false) String name,
-      @ParameterObject Pageable pageable) {
+      @ParameterObject ProductFilterRequest filterRequest, @ParameterObject Pageable pageable) {
 
-    return ResponseEntity.ok(productService.getProducts(category, name, pageable));
+    return ResponseEntity.ok(
+        productService.getProducts(filterRequest.category(), filterRequest.name(), pageable));
   }
 }

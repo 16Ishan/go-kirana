@@ -10,7 +10,7 @@ public class ProductSpecification {
   public static Specification<Product> hasCategory(String category) {
     return (root, query, cb) -> {
       if (StringUtils.isBlank(category)) return cb.conjunction();
-      Join<Object, Object> categoryJoin = root.join("category", JoinType.LEFT);
+      Join<Product, ?> categoryJoin = root.join("category", JoinType.LEFT);
       return cb.like(cb.lower(categoryJoin.get("name")), "%" + category.toLowerCase() + "%");
     };
   }

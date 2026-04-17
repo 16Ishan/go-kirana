@@ -26,13 +26,14 @@ public class ProductServiceImpl implements ProductService {
   public Page<ProductDto> getProducts(String category, String name, Pageable pageable) {
 
     requestValidator.validateLimit(pageable.getPageSize());
-    if (StringUtils.isBlank(category)) category = null;
-    if (StringUtils.isBlank(name)) name = null;
 
-    Specification<Product> spec =
-        Specification.where(ProductSpecification.fetchCategory())
-            .and(ProductSpecification.hasCategory(category))
-            .and(ProductSpecification.hasName(name));
+    Specification<Product> spec = Specification.where(ProductSpecification.hasName(name));
+
+    if (StringUtils.isBlank(category)) {
+      spec = spec.and(ProductSpecification.fetchCategory());
+    } else {
+      spec = spec.and(ProductSpecification.hasCategory(category));
+    }
 
     return productRepository.findAll(spec, pageable).map(productMapper::toDto);
   }
