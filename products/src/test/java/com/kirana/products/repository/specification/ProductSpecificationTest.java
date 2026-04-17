@@ -41,61 +41,81 @@ class ProductSpecificationTest {
   @Mock private Path<String> namePath;
   @Mock private Expression<String> nameLowerExpression;
 
+  // --- categoryFilterWithFetch ---
+
   @ParameterizedTest
   @NullAndEmptySource
   @ValueSource(strings = {" ", "  "})
-  void hasCategory_shouldReturnConjunction_whenCategoryBlank(String category) {
-    when(criteriaBuilder.conjunction()).thenReturn(predicate);
-
-    Specification<Product> specification = ProductSpecification.hasCategory(category);
-    Predicate result = specification.toPredicate(root, productQuery, criteriaBuilder);
-
-    assertSame(predicate, result);
-    verify(criteriaBuilder).conjunction();
-    verify(root, never()).join(any(String.class), eq(JoinType.LEFT));
-  }
-
-  @Test
-  void hasCategory_shouldBuildLikePredicate_whenCategoryProvided() {
-    when(root.<Product, Object>join(eq("category"), eq(JoinType.LEFT))).thenReturn(categoryJoin);
-    when(categoryJoin.<String>get("name")).thenReturn(categoryNamePath);
-    when(criteriaBuilder.lower(categoryNamePath)).thenReturn(categoryLowerExpression);
-    when(criteriaBuilder.like(categoryLowerExpression, "%dairy%")).thenReturn(predicate);
-
-    Specification<Product> specification = ProductSpecification.hasCategory("DAIRY");
-    Predicate result = specification.toPredicate(root, productQuery, criteriaBuilder);
-
-    assertSame(predicate, result);
-    verify(root).join(eq("category"), eq(JoinType.LEFT));
-    verify(criteriaBuilder).like(categoryLowerExpression, "%dairy%");
-  }
-
-  @Test
-  void fetchCategory_shouldFetchForNonCountQueries() {
-    when(criteriaBuilder.conjunction()).thenReturn(predicate);
+  void categoryFilterWithFetch_shouldFetchAndReturnConjunction_whenCategoryBlankOnNonCountQuery(
+      String category) {
     when(productQuery.getResultType()).thenReturn(Product.class);
     when(root.<Product, Object>fetch(eq("category"), eq(JoinType.LEFT))).thenReturn(categoryFetch);
+    when(criteriaBuilder.conjunction()).thenReturn(predicate);
 
-    Specification<Product> specification = ProductSpecification.fetchCategory();
+    Specification<Product> specification = ProductSpecification.categoryFilterWithFetch(category);
     Predicate result = specification.toPredicate(root, productQuery, criteriaBuilder);
 
     assertSame(predicate, result);
     verify(root).fetch(eq("category"), eq(JoinType.LEFT));
     verify(productQuery).distinct(true);
+    verify(root, never()).join(any(String.class), eq(JoinType.LEFT));
   }
 
   @Test
-  void fetchCategory_shouldSkipFetchForCountQueries() {
-    when(criteriaBuilder.conjunction()).thenReturn(predicate);
-    when(countQuery.getResultType()).thenReturn(Long.class);
+  void
+      categoryFilterWithFetch_shouldFetchAndFilterByCategory_whenCategoryProvidedOnNonCountQuery() {
+    when(productQuery.getResultType()).thenReturn(Product.class);
+    when(root.<Product, Object>fetch(eq("category"), eq(JoinType.LEFT))).thenReturn(categoryFetch);
+    when(root.<Product, Object>join(eq("category"), eq(JoinType.LEFT))).thenReturn(categoryJoin);
+    when(categoryJoin.<String>get("name")).thenReturn(categoryNamePath);
+    when(criteriaBuilder.lower(categoryNamePath)).thenReturn(categoryLowerExpression);
+    when(criteriaBuilder.like(categoryLowerExpression, "%dairy%")).thenReturn(predicate);
 
-    Specification<Product> specification = ProductSpecification.fetchCategory();
+    Specification<Product> specification = ProductSpecification.categoryFilterWithFetch("DAIRY");
+    Predicate result = specification.toPredicate(root, productQuery, criteriaBuilder);
+
+    assertSame(predicate, result);
+    verify(root).fetch(eq("category"), eq(JoinType.LEFT));
+    verify(productQuery).distinct(true);
+    verify(root).join(eq("category"), eq(JoinType.LEFT));
+    verify(criteriaBuilder).like(categoryLowerExpression, "%dairy%");
+  }
+
+  @ParameterizedTest
+  @NullAndEmptySource
+  @ValueSource(strings = {" ", "  "})
+  void categoryFilterWithFetch_shouldReturnConjunctionWithoutFetch_whenCategoryBlankOnCountQuery(
+      String category) {
+    when(countQuery.getResultType()).thenReturn(Long.class);
+    when(criteriaBuilder.conjunction()).thenReturn(predicate);
+
+    Specification<Product> specification = ProductSpecification.categoryFilterWithFetch(category);
     Predicate result = specification.toPredicate(root, countQuery, criteriaBuilder);
 
     assertSame(predicate, result);
     verify(root, never()).fetch(any(String.class), eq(JoinType.LEFT));
-    verify(countQuery, never()).distinct(true);
+    verify(root, never()).join(any(String.class), eq(JoinType.LEFT));
   }
+
+  @Test
+  void
+      categoryFilterWithFetch_shouldFilterByCategoryWithoutFetch_whenCategoryProvidedOnCountQuery() {
+    when(countQuery.getResultType()).thenReturn(Long.class);
+    when(root.<Product, Object>join(eq("category"), eq(JoinType.LEFT))).thenReturn(categoryJoin);
+    when(categoryJoin.<String>get("name")).thenReturn(categoryNamePath);
+    when(criteriaBuilder.lower(categoryNamePath)).thenReturn(categoryLowerExpression);
+    when(criteriaBuilder.like(categoryLowerExpression, "%dairy%")).thenReturn(predicate);
+
+    Specification<Product> specification = ProductSpecification.categoryFilterWithFetch("DAIRY");
+    Predicate result = specification.toPredicate(root, countQuery, criteriaBuilder);
+
+    assertSame(predicate, result);
+    verify(root, never()).fetch(any(String.class), eq(JoinType.LEFT));
+    verify(root).join(eq("category"), eq(JoinType.LEFT));
+    verify(criteriaBuilder).like(categoryLowerExpression, "%dairy%");
+  }
+
+  // --- hasName ---
 
   @ParameterizedTest
   @NullAndEmptySource

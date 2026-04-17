@@ -8,7 +8,6 @@ import com.kirana.products.repository.specification.ProductSpecification;
 import com.kirana.products.service.ProductService;
 import com.kirana.products.validations.RequestValidator;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,13 +26,9 @@ public class ProductServiceImpl implements ProductService {
 
     requestValidator.validateLimit(pageable.getPageSize());
 
-    Specification<Product> spec = Specification.where(ProductSpecification.hasName(name));
-
-    if (StringUtils.isBlank(category)) {
-      spec = spec.and(ProductSpecification.fetchCategory());
-    } else {
-      spec = spec.and(ProductSpecification.hasCategory(category));
-    }
+    Specification<Product> spec =
+        Specification.where(ProductSpecification.hasName(name))
+            .and(ProductSpecification.categoryFilterWithFetch(category));
 
     return productRepository.findAll(spec, pageable).map(productMapper::toDto);
   }

@@ -7,22 +7,32 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductSpecification {
-  public static Specification<Product> hasCategory(String category) {
-    return (root, query, cb) -> {
-      if (StringUtils.isBlank(category)) return cb.conjunction();
-      Join<Product, ?> categoryJoin = root.join("category", JoinType.LEFT);
-      return cb.like(cb.lower(categoryJoin.get("name")), "%" + category.toLowerCase() + "%");
-    };
-  }
 
-  public static Specification<Product> fetchCategory() {
+  public static Specification<Product> categoryFilterWithFetch(String category) {
     return (root, query, cb) -> {
-      // skipping for count query
-      if (query != null && query.getResultType() != Long.class) {
+      boolean isCountQuery = query != null && query.getResultType() == Long.class;
+
+      // Non-count query: fetch category once so mapper won't trigger lazy loading.
+      if (query != null && !isCountQuery) {
         root.fetch("category", JoinType.LEFT);
         query.distinct(true);
+
+        if (StringUtils.isBlank(category)) {
+          return cb.conjunction();
+        }
+
+        // Use a single join path for filtering.
+        Join<Product, ?> categoryJoin = root.join("category", JoinType.LEFT);
+        return cb.like(cb.lower(categoryJoin.get("name")), "%" + category.toLowerCase() + "%");
       }
-      return cb.conjunction();
+
+      // Count query: avoid fetch; only join when filter exists.
+      if (StringUtils.isBlank(category)) {
+        return cb.conjunction();
+      }
+
+      Join<Product, ?> categoryJoin = root.join("category", JoinType.LEFT);
+      return cb.like(cb.lower(categoryJoin.get("name")), "%" + category.toLowerCase() + "%");
     };
   }
 
