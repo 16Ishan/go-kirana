@@ -35,6 +35,7 @@ class ProductSpecificationTest {
   @Mock private CriteriaBuilder criteriaBuilder;
   @Mock private Predicate predicate;
   @Mock private Join<Product, Object> categoryJoin;
+  @Mock private Path<Object> categoryPath;
   @Mock private Path<String> categoryNamePath;
   @Mock private Expression<String> categoryLowerExpression;
   @Mock private Fetch<Product, Object> categoryFetch;
@@ -66,8 +67,8 @@ class ProductSpecificationTest {
       categoryFilterWithFetch_shouldFetchAndFilterByCategory_whenCategoryProvidedOnNonCountQuery() {
     when(productQuery.getResultType()).thenReturn(Product.class);
     when(root.<Product, Object>fetch(eq("category"), eq(JoinType.LEFT))).thenReturn(categoryFetch);
-    when(root.<Product, Object>join(eq("category"), eq(JoinType.LEFT))).thenReturn(categoryJoin);
-    when(categoryJoin.<String>get("name")).thenReturn(categoryNamePath);
+    when(root.<Object>get("category")).thenReturn(categoryPath);
+    when(categoryPath.<String>get("name")).thenReturn(categoryNamePath);
     when(criteriaBuilder.lower(categoryNamePath)).thenReturn(categoryLowerExpression);
     when(criteriaBuilder.like(categoryLowerExpression, "%dairy%")).thenReturn(predicate);
 
@@ -77,7 +78,7 @@ class ProductSpecificationTest {
     assertSame(predicate, result);
     verify(root).fetch(eq("category"), eq(JoinType.LEFT));
     verify(productQuery).distinct(true);
-    verify(root).join(eq("category"), eq(JoinType.LEFT));
+    verify(root, never()).join(any(String.class), eq(JoinType.LEFT));
     verify(criteriaBuilder).like(categoryLowerExpression, "%dairy%");
   }
 
