@@ -45,7 +45,12 @@ jacoco {
 test {
     jvmArgs += "--add-opens=java.base/java.lang=ALL-UNNAMED"
     useJUnitPlatform()
+    ignoreFailures = false
     finalizedBy jacocoTestReport
+}
+
+tasks.named('build') {
+    dependsOn test
 }
 
 jacocoTestReport {
