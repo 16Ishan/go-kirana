@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class Category {
 
-  @Id @GeneratedValue private UUID id;
+  @Id @GeneratedValue(strategy = GenerationType.UUID) private UUID id;
 
   private String name;
 }
