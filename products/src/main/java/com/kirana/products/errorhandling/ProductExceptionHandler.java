@@ -23,7 +23,8 @@ public class ProductExceptionHandler {
     BindException.class,
     MissingServletRequestParameterException.class,
     HttpMessageNotReadableException.class,
-    ConstraintViolationException.class
+    ConstraintViolationException.class,
+    IllegalArgumentException.class
   })
   public ResponseEntity<ErrorResponse> handleBadRequestExceptions(
       Exception ex, HttpServletRequest request) {
