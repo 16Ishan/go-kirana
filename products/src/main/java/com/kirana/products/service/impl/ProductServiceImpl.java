@@ -1,14 +1,17 @@
 package com.kirana.products.service.impl;
 
 import com.kirana.products.dto.ProductDto;
+import com.kirana.products.entity.Product;
 import com.kirana.products.mapper.ProductMapper;
 import com.kirana.products.repository.ProductRepository;
+import com.kirana.products.repository.specification.ProductSpecification;
 import com.kirana.products.service.ProductService;
 import com.kirana.products.validations.RequestValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,8 +29,11 @@ public class ProductServiceImpl implements ProductService {
     if (StringUtils.isBlank(category)) category = null;
     if (StringUtils.isBlank(name)) name = null;
 
-    return productRepository
-        .findByCategoryAndName(category, name, pageable)
-        .map(productMapper::toDto);
+    Specification<Product> spec =
+        Specification.where(ProductSpecification.fetchCategory())
+            .and(ProductSpecification.hasCategory(category))
+            .and(ProductSpecification.hasName(name));
+
+    return productRepository.findAll(spec, pageable).map(productMapper::toDto);
   }
 }

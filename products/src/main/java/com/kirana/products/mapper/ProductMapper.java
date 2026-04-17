@@ -1,21 +1,21 @@
 package com.kirana.products.mapper;
 
 import com.kirana.products.dto.ProductDto;
-import com.kirana.products.repository.projection.ProductProjection;
+import com.kirana.products.entity.Product;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProductMapper {
-  public ProductDto toDto(ProductProjection projection) {
+  public ProductDto toDto(Product product) {
     return new ProductDto(
-        projection.getId(),
-        projection.getName(),
-        projection.getDescription(),
-        projection.getCategoryName(),
-        projection.getPrice(),
-        projection.getImageUrl(),
-        Boolean.TRUE.equals(projection.getIsAvailable()),
-        projection.getCreatedAt(),
-        projection.getUpdatedAt());
+        product.getId(),
+        product.getName(),
+        product.getDescription(),
+        product.getCategory().getName(),
+        product.getPrice(),
+        product.getImageUrl(),
+        product.isAvailable(),
+        product.getCreatedAt(),
+        product.getUpdatedAt());
   }
 }
