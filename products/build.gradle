@@ -11,6 +11,11 @@ plugins {
 group = "com.kirana"
 version = "1.0.0"
 
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add("-parameters")
+}
+
+
 dependencies {
     implementation (libs.bundles.springBootStarters)
     implementation (libs.bundles.apache)
@@ -40,6 +45,7 @@ jacoco {
 test {
     jvmArgs += "--add-opens=java.base/java.lang=ALL-UNNAMED"
     useJUnitPlatform()
+    ignoreFailures = false
     finalizedBy jacocoTestReport
 }
 
@@ -64,6 +70,7 @@ spotless {
         endWithNewline()
     }
 }
+
 jib {
     from {
         image = "${jibBaseImage}"
@@ -88,7 +95,7 @@ jib {
     container {
         creationTime = "USE_CURRENT_TIMESTAMP"
         environment = [
-                'TZ': 'Europe/Berlin'
+                'TZ': 'Asia/Kolkata'
         ]
 
     }
@@ -121,12 +128,12 @@ def getCurrentBranch() {
     branch
 }
 
-// Sonar checks disabled temporarily due to errors
-// tasks.sonar.dependsOn = ["check"]
-// tasks.build.dependsOn = ["sonar"]
-// tasks.jibDockerBuild.dependsOn = ["sonar"]
-
 tasks.named('wrapper') {
     distributionType = Wrapper.DistributionType.ALL
     gradleVersion = '8.13'
+}
+
+tasks.named('build') {
+    dependsOn test
+    dependsOn 'jib'
 }
