@@ -49,10 +49,6 @@ test {
     finalizedBy jacocoTestReport
 }
 
-tasks.named('build') {
-    dependsOn test
-}
-
 jacocoTestReport {
     reports {
         xml.required = true
@@ -74,6 +70,7 @@ spotless {
         endWithNewline()
     }
 }
+
 jib {
     from {
         image = "${jibBaseImage}"
@@ -98,7 +95,7 @@ jib {
     container {
         creationTime = "USE_CURRENT_TIMESTAMP"
         environment = [
-                'TZ': 'Europe/Berlin'
+                'TZ': 'Asia/Kolkata'
         ]
 
     }
@@ -131,12 +128,12 @@ def getCurrentBranch() {
     branch
 }
 
-// Sonar checks disabled temporarily due to errors
-// tasks.sonar.dependsOn = ["check"]
-// tasks.build.dependsOn = ["sonar"]
-// tasks.jibDockerBuild.dependsOn = ["sonar"]
-
 tasks.named('wrapper') {
     distributionType = Wrapper.DistributionType.ALL
     gradleVersion = '8.13'
+}
+
+tasks.named('build') {
+    dependsOn test
+    dependsOn 'jib'
 }
